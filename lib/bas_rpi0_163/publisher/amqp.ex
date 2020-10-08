@@ -33,8 +33,8 @@ defmodule BasRpi0163.Publisher.AMQP do
         Process.monitor(conn.pid)
         {:noreply, conn}
 
-      {:error, _} ->
-        Logger.error("Failed to connect to AMQP. Reconnecting later...")
+      {:error, reason} ->
+        Logger.error("Failed to connect to AMQP: #{inspect reason}. Reconnecting later...")
         # Retry later
         Process.send_after(self(), :connect, @reconnect_interval)
         {:noreply, nil}

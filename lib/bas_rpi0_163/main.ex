@@ -1,7 +1,8 @@
 defmodule BasRpi0163.Main do
   @moduledoc false
 
-  @default_interval 60_000 #ms
+  #@default_interval 60_000 #ms
+  @default_interval 1_000 #ms
 
   alias BasRpi0163.Sensors.SGP30
   alias BasRpi0163.Publisher.Producer
@@ -11,13 +12,15 @@ defmodule BasRpi0163.Main do
   defmodule State do
     @moduledoc false
     defstruct \
-      interval: 60_000,         \
+      interval: nil, \
       source:   "bas-rpi0-163", \
       location: "Office"
   end
 
   defmodule Measurement do
     @moduledoc false
+
+    @derive Jason.Encoder
     defstruct \
       measured_at: nil, \
       quantity:    nil, \
@@ -51,7 +54,7 @@ defmodule BasRpi0163.Main do
 
   def build_measurement(quantity, value, unit, state) do
     %Measurement{
-      measured_at: nil,
+      measured_at: DateTime.now!("Etc/UTC"),
       quantity:    quantity,
       value:       value,
       unit:        unit,

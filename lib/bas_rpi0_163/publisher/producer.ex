@@ -22,7 +22,7 @@ defmodule BasRpi0163.Publisher.Producer do
   end
 
   def enqueue(%Measurement{} = measurement) do
-    event = Nerves.Utils.json_encode(measurement)
+    event = Jason.encode!(measurement)
     GenServer.call(__MODULE__, {:enqueue, event})
   end
 end

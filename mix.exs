@@ -45,6 +45,7 @@ defmodule BasRpi0163.MixProject do
       {:toolshed, "~> 0.2.13"},
       {:gen_stage, "~> 1.0"},
       {:amqp, "~> 1.0"},
+      {:jason, "~> 1.2"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.11.3", targets: @all_targets},
