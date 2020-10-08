@@ -34,6 +34,8 @@ defmodule BasRpi0163.Application do
       # Children for all targets except host
       # Starts a worker by calling: BasRpi0163.Worker.start_link(arg)
       # {BasRpi0163.Worker, arg},
+      BasRpi0163.Sensors.Supervisor,
+      BasRpi0163.Publisher.Supervisor,
     ]
   end
 

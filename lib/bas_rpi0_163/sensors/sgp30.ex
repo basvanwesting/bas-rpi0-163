@@ -1,4 +1,4 @@
-defmodule BasRpi0163.SGP30 do
+defmodule BasRpi0163.Sensors.SGP30 do
   @moduledoc false
 
   use GenServer
