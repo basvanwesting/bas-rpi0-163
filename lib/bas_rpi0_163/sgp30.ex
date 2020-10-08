@@ -55,4 +55,12 @@ defmodule BasRpi0163.SGP30 do
     end
   end
 
+  def handle_call(:get_measurements, _from, state) do
+    {:reply, %{eco2_ppm: state.eco2_ppm, tvoc_ppb: state.tvoc_ppb}, state}
+  end
+
+  def get_measurements() do
+    GenServer.call(__MODULE__, :get_measurements)
+  end
+
 end
