@@ -8,7 +8,7 @@ defmodule BasRpi0163.Application do
   def start(_type, _args) do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: BasRpi0163.Supervisor]
+    opts = [strategy: :rest_for_one, name: BasRpi0163.Supervisor]
 
     children =
       [
@@ -36,6 +36,7 @@ defmodule BasRpi0163.Application do
       # {BasRpi0163.Worker, arg},
       BasRpi0163.Sensors.Supervisor,
       BasRpi0163.Publisher.Supervisor,
+      {BasRpi0163.Main, 60_000}, #interval
     ]
   end
 

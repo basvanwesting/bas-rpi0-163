@@ -1,8 +1,7 @@
 defmodule BasRpi0163.Main do
   @moduledoc false
 
-  #@default_interval 60_000 #ms
-  @default_interval 1_000 #ms
+  @default_interval 60_000 #ms
 
   alias BasRpi0163.Sensors.SGP30
   alias BasRpi0163.Publisher.Producer
