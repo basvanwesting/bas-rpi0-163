@@ -40,6 +40,8 @@ bytes_to_read = 3
 reply = i2c.read(state.i2c_bus, state.address, bytes_to_read, retries: i2c_retry_count)
 {:ok, <<value::16, crc::8>>} = reply
 
+reply = i2c.write_read(state.i2c_bus, state.address, message, 3, retries: i2c_retry_count)
+
 
 # set interval
 interval = 5
@@ -98,5 +100,41 @@ iex(156)> rh_value
 48.80674362182617
 
 
+
+{:ok, pid} = BasRpi0163.Sensors.SCD30.start_link([])
+:sys.get_state(pid)
+%{i2c_ref: ref} = :sys.get_state(pid)
+
+<<0x4600::16>>
+<<70, 0, 0, 2, 227>>
+<<70, 0, 0, 5, 116>>
+
+# set interval
+Circuits.I2C.write(ref, 0x61, <<70, 0, 0, 2, 227>>, retries: 2)
+Circuits.I2C.write(ref, 0x61, <<70, 0, 0, 5, 116>>, retries: 2)
+
+# ready?
+Circuits.I2C.write_read(ref, 0x61, <<0x0202::16>>, 3, retries: 2)
+Circuits.I2C.write(ref, 0x61, <<0x0202::16>>, retries: 2)
+Circuits.I2C.read(ref, 0x61, 3, retries: 2)
+
+#read
+Circuits.I2C.write_read(ref, 0x61, <<0x0300::16>>, 18, retries: 2)
+Circuits.I2C.write(ref, 0x61, <<0x0300::16>>, retries: 2)
+Circuits.I2C.read(ref, 0x61, 18, retries: 2)
+
+#restart
+Circuits.I2C.write(ref, 0x61, <<0xD304::16>>, retries: 2)
+
+#stop cont meas
+Circuits.I2C.write(ref, 0x61, <<0x0104::16>>, retries: 2)
+
+#start cont meas / 1000mbar
+Circuits.I2C.write(ref, 0x61, <<0, 16, 3, 232, 212>>, retries: 2)
+
+{:ok, ref} = Circuits.I2C.open("i2c-1")
+
+Process.exit(pid, :normal)
+Process.exit(pid, :kill)
 
 

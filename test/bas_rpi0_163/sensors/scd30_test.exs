@@ -18,8 +18,12 @@ defmodule BasRpi0163.Sensors.SCD30Test do
   end
 
   test "build_message/2" do
+    message = SCD30.build_message(<<0x4600::16>>, 2)
+    assert message == <<70, 0, 0, 2, 227>>
     message = SCD30.build_message(<<0x4600::16>>, 5)
     assert message == <<70, 0, 0, 5, 116>>
+    message = SCD30.build_message(<<0x0010::16>>, 1000)
+    assert message == <<0, 16, 3, 232, 212>>
   end
 
   test "convert_single_measurement_bytes_to_float/1" do

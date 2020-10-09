@@ -65,9 +65,8 @@ defmodule BasRpi0163.Sensors.SCD30 do
   end
 
   def handle_info(:measure, state) do
-    i2c_ref = state.i2c_ref
-    with true <- measurement_ready?(i2c_ref),
-         %{} = data <- read_measurement(i2c_ref) do
+    with true <- measurement_ready?(state.i2c_ref),
+         %{} = data <- read_measurement(state.i2c_ref) do
 
        Process.send_after(self(), :measure, @set_measurement_interval_value)
        {:noreply, struct(state, data)}
@@ -79,7 +78,8 @@ defmodule BasRpi0163.Sensors.SCD30 do
   end
 
   def measurement_ready?(i2c_ref) do
-    with {:ok, reply} <- @i2c.write_read(i2c_ref, @address, @get_data_ready_cmd, @get_data_ready_bytes, retries: @i2c_retry_count),
+    with :ok <- @i2c.write(i2c_ref, @address, @get_data_ready_cmd, retries: @i2c_retry_count),
+         {:ok, reply} <- @i2c.read(i2c_ref, @address, @get_data_ready_bytes, retries: @i2c_retry_count),
          true <- parse_get_data_ready(reply) do
       true
     else
@@ -90,7 +90,8 @@ defmodule BasRpi0163.Sensors.SCD30 do
   end
 
   def read_measurement(i2c_ref) do
-    with {:ok, reply} <- @i2c.write_read(i2c_ref, @address, @read_measurement_cmd, @read_measurement_bytes, retries: @i2c_retry_count),
+    with :ok <- @i2c.write(i2c_ref, @address, @read_measurement_cmd, retries: @i2c_retry_count),
+         {:ok, reply} <- @i2c.read(i2c_ref, @address, @read_measurement_bytes, retries: @i2c_retry_count),
           %{} = data <- parse_read_measurement(reply) do
       data
     else
