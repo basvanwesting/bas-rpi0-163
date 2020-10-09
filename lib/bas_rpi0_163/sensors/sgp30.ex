@@ -4,6 +4,8 @@ defmodule BasRpi0163.Sensors.SGP30 do
   use GenServer
   #require Logger
 
+  alias BasRpi0163.Measurement
+
   @i2c Circuits.I2C
   @i2c_bus "i2c-1"
   @i2c_retry_count 2
@@ -56,7 +58,22 @@ defmodule BasRpi0163.Sensors.SGP30 do
   end
 
   def handle_call(:get_measurements, _from, state) do
-    {:reply, %{eco2_ppm: state.eco2_ppm, tvoc_ppb: state.tvoc_ppb}, state}
+    measurements = [
+      %Measurement{
+        sensor: "SGP30",
+        quantity: "eCO2",
+        value: state.eco2_ppm,
+        unit: "ppm",
+      },
+      %Measurement{
+        sensor: "SGP30",
+        quantity: "TVOC",
+        value: state.tvoc_ppb,
+        unit: "ppb",
+      },
+    ]
+
+    {:reply, measurements, state}
   end
 
   def get_measurements() do

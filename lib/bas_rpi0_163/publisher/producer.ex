@@ -2,7 +2,7 @@ defmodule BasRpi0163.Publisher.Producer do
   use GenStage
   require Logger
 
-  alias BasRpi0163.Main.Measurement
+  alias BasRpi0163.Measurement
 
   def start_link(_args) do
     GenStage.start_link(__MODULE__, [], name: __MODULE__)

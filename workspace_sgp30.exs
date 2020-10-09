@@ -74,21 +74,3 @@ for i <- 1..1000 do
 
   :timer.sleep(950)
 end
-
-# GenServer
-
-BasRpi0163.SGP30.start_link([])
-for i <- 1..1000 do
-  %{eco2_ppm: eco2_ppm, tvoc_ppb: tvoc_ppb} = BasRpi0163.SGP30.get_measurements
-  IO.puts "eCO2: #{eco2_ppm} ppm, TVOC: #{tvoc_ppb} ppb"
-
-  :timer.sleep(2000)
-end
-
-
-
-
-
-
-
-

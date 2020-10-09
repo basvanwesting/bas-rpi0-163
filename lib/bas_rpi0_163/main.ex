@@ -13,21 +13,7 @@ defmodule BasRpi0163.Main do
     @moduledoc false
     defstruct \
       interval: nil, \
-      source:   "bas-rpi0-163", \
-      location: "Office"
-  end
-
-  defmodule Measurement do
-    @moduledoc false
-
-    @derive Jason.Encoder
-    defstruct \
-      measured_at: nil, \
-      quantity:    nil, \
-      unit:        nil, \
-      value:       nil, \
-      location:    nil, \
-      source:      nil
+      host:  "bas-rpi0-163"
   end
 
   def start_link(interval \\ @default_interval) do
@@ -40,26 +26,22 @@ defmodule BasRpi0163.Main do
   end
 
   def handle_info(:tick, state) do
-    with %{eco2_ppm: eco2_ppm, tvoc_ppb: tvoc_ppb} <- SGP30.get_measurements() do
-      build_measurement("CO2", eco2_ppm, "ppm", state)
-      |> Producer.enqueue
-
-      build_measurement("TVOC", tvoc_ppb, "ppb", state)
-      |> Producer.enqueue
+    with measurements when is_list(measurements) <- SGP30.get_measurements() do
+      for measurement <- measurements do
+        measurement
+        |> enrich_measurement(state.host)
+        |> Producer.enqueue
+      end
     end
 
     Process.send_after(self(), :tick, state.interval)
     {:noreply, state}
   end
 
-  def build_measurement(quantity, value, unit, state) do
-    %Measurement{
-      measured_at: DateTime.now!("Etc/UTC"),
-      quantity:    quantity,
-      value:       value,
-      unit:        unit,
-      location:    state.location,
-      source:      state.source,
+  def enrich_measurement(measurement, host) do
+    %{ measurement |
+        measured_at: DateTime.now!("Etc/UTC"),
+        host: host,
     }
   end
 
