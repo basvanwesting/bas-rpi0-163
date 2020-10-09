@@ -47,13 +47,17 @@ defmodule BasRpi0163.Sensors.SGP30 do
   end
 
   def handle_info(:measure_air_quality, state) do
-    with :ok <- @i2c.write(state.i2c_ref, @address, @measure_air_quality_cmd, retries: @i2c_retry_count),
-         :ok <- :timer.sleep(@measure_air_quality_duration),
-         {:ok, reply} <- @i2c.read(state.i2c_ref, @address, @measure_air_quality_bytes, retries: @i2c_retry_count) do
+    with :ok <- @i2c.write(state.i2c_ref, @address, @measure_air_quality_cmd, retries: @i2c_retry_count) do
+      Process.send_after(self(), :read_air_quality, @measure_air_quality_duration)
+      {:noreply, state}
+    end
+  end
 
-       <<eco2_ppm::16, _eco2_ppm_crc::8, tvoc_ppb::16, _tvoc_ppb_crc::8>> = reply
-       Process.send_after(self(), :measure_air_quality, @measure_air_quality_interval - @measure_air_quality_duration)
-       {:noreply, %{state | eco2_ppm: eco2_ppm, tvoc_ppb: tvoc_ppb}}
+  def handle_info(:read_air_quality, state) do
+    with {:ok, reply} <- @i2c.read(state.i2c_ref, @address, @measure_air_quality_bytes, retries: @i2c_retry_count) do
+      <<eco2_ppm::16, _eco2_ppm_crc::8, tvoc_ppb::16, _tvoc_ppb_crc::8>> = reply
+      Process.send_after(self(), :measure_air_quality, @measure_air_quality_interval - @measure_air_quality_duration)
+      {:noreply, %{state | eco2_ppm: eco2_ppm, tvoc_ppb: tvoc_ppb}}
     end
   end
 

@@ -11,6 +11,7 @@ defmodule BasRpi0163.Sensors.Supervisor do
   def init(_args) do
     children = [
       {BasRpi0163.Sensors.SGP30, []},
+      #{BasRpi0163.Sensors.SCD30, []},
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

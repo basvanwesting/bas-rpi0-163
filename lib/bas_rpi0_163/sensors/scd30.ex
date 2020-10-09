@@ -10,7 +10,7 @@ defmodule BasRpi0163.Sensors.SCD30 do
   @i2c_bus "i2c-1"
   @i2c_retry_count 2
 
-  @address 0x16
+  @address 0x61
 
   @set_measurement_interval_cmd   <<0x4600::16>>
   @set_measurement_interval_value 2000
