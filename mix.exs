@@ -46,6 +46,7 @@ defmodule BasRpi0163.MixProject do
       {:gen_stage, "~> 1.0"},
       {:amqp, "~> 1.0"},
       {:jason, "~> 1.2"},
+      {:crc, "~> 0.10"}, #Compile dependencies for CRC. unset LDFLAGS and CPPFLAGS
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.11.3", targets: @all_targets},
@@ -53,7 +54,6 @@ defmodule BasRpi0163.MixProject do
       {:nerves_time, "~> 0.4.2", targets: @all_targets},
       {:circuits_gpio, "~> 0.4", targets: @all_targets},
       {:circuits_i2c, "~> 0.3", targets: @all_targets},
-      {:crc, "~> 0.10", targets: @all_targets},
 
       # Dependencies for specific targets
       {:nerves_system_rpi, "~> 1.12", runtime: false, targets: :rpi},
