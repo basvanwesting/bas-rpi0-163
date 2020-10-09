@@ -3,6 +3,7 @@ defmodule BasRpi0163.Main do
 
   @default_interval 60_000 #ms
 
+  alias BasRpi0163.Sensors.SCD30
   alias BasRpi0163.Sensors.SGP30
   alias BasRpi0163.Publisher.Producer
 
@@ -25,16 +26,21 @@ defmodule BasRpi0163.Main do
   end
 
   def handle_info(:tick, state) do
-    with measurements when is_list(measurements) <- SGP30.get_measurements() do
-      for measurement <- measurements do
-        measurement
-        |> enrich_measurement(state.host)
-        |> Producer.enqueue
-      end
-    end
+    publish_measurements_for(SCD30, state.host)
+    publish_measurements_for(SGP30, state.host)
 
     Process.send_after(self(), :tick, state.interval)
     {:noreply, state}
+  end
+
+  def publish_measurements_for(sensor, host) do
+    with measurements when is_list(measurements) <- sensor.get_measurements() do
+      for measurement <- measurements do
+        measurement
+        |> enrich_measurement(host)
+        |> Producer.enqueue
+      end
+    end
   end
 
   def enrich_measurement(measurement, host) do
