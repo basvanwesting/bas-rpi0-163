@@ -13,7 +13,7 @@ defmodule BasRpi0163.Main do
     @moduledoc false
     defstruct \
       interval: nil, \
-      host:  "bas-rpi0-163"
+      host:  "bas-rpi0-166"
   end
 
   def start_link(interval \\ @default_interval) do
@@ -27,7 +27,7 @@ defmodule BasRpi0163.Main do
 
   def handle_info(:tick, state) do
     publish_measurements_for(SCD30, state.host)
-    publish_measurements_for(SGP30, state.host)
+    #publish_measurements_for(SGP30, state.host)
 
     Process.send_after(self(), :tick, state.interval)
     {:noreply, state}

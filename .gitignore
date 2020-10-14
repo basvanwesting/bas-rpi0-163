@@ -17,6 +17,8 @@
 erl_crash.dump
 
 /config/*.secrets.exs
+/config/certs
+/nerves-hub
 
 /log
 .fzf-history

@@ -36,7 +36,7 @@ defmodule BasRpi0163.Application do
       # {BasRpi0163.Worker, arg},
       BasRpi0163.Sensors.Supervisor,
       BasRpi0163.Publisher.Supervisor,
-      {BasRpi0163.Main, 60_000}, #interval
+      {BasRpi0163.Main, 5_000}, #interval
     ]
   end
 

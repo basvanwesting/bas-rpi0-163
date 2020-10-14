@@ -10,7 +10,7 @@ defmodule BasRpi0163.Sensors.Supervisor do
   @impl true
   def init(_args) do
     children = [
-      {BasRpi0163.Sensors.SGP30, []},
+      #{BasRpi0163.Sensors.SGP30, []},
       {BasRpi0163.Sensors.SCD30, []},
     ]
 
